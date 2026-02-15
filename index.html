@@ -3,162 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Celestial Wish Jar | Semesta Harapan</title>
+    <title>Ocean of Whispers | Pesan di Dalam Botol</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;500&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
     
     <style>
         :root {
+            --sea: #0a192f;
+            --water: #112240;
             --gold: #d4af37;
-            --space: #050508;
-            --glass: rgba(255, 255, 255, 0.1);
+            --sand: #c2b280;
         }
 
-        body {
-            margin: 0; padding: 0; background: var(--space);
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background: var(--sea);
             font-family: 'Quicksand', sans-serif; color: white;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; overflow-x: hidden;
         }
 
-        /* --- BACKGROUND BINTANG --- */
-        .stars {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
-            z-index: -1;
+        /* --- LAUTAN --- */
+        .ocean {
+            position: relative; width: 100%; height: 100vh;
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            overflow: hidden;
         }
 
-        header { padding: 40px 20px; text-align: center; }
-        .logo { font-family: 'Dancing Script', cursive; font-size: 2.8rem; color: var(--gold); margin: 0; }
-        .sub { font-family: 'Playfair Display', serif; font-style: italic; opacity: 0.6; font-size: 0.9rem; letter-spacing: 2px; }
-
-        /* --- THE JAR (BOTOL KRISTAL) --- */
-        #jar-container {
-            position: relative; width: 280px; height: 400px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50px 50px 100px 100px;
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.1), inset 0 0 30px rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            margin: 20px 0;
-            display: flex; flex-direction: column; align-items: center;
-            padding: 40px 20px; overflow: hidden;
+        /* Efek Ombak Lembut */
+        .wave {
+            position: absolute; bottom: 0; left: 0; width: 200%; height: 100px;
+            background: url('https://raw.githubusercontent.com/yusufshakeel/svg-icon/master/svg/wave.svg');
+            background-size: 50% 100px;
+            opacity: 0.1;
+            animation: waveAnim 20s linear infinite;
         }
 
-        #jar-container::before { /* Tutup Botol */
-            content: ''; position: absolute; top: 0; width: 40%; height: 20px;
-            background: var(--gold); border-radius: 0 0 15px 15px;
+        @keyframes waveAnim {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
         }
 
-        /* --- WISHES INSIDE --- */
-        .wish-bubble {
-            position: absolute; background: white; color: black;
-            padding: 8px 12px; border-radius: 15px; font-size: 11px;
-            max-width: 150px; text-align: center; font-weight: bold;
-            box-shadow: 0 0 15px rgba(255,255,255,0.8);
-            animation: floatWish 8s linear infinite;
-            opacity: 0.9; cursor: default;
+        header {
+            position: absolute; top: 30px; width: 100%; text-align: center;
+            z-index: 10; pointer-events: none;
+        }
+        .logo { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--gold); margin: 0; }
+        .sub { font-family: 'Playfair Display', serif; font-style: italic; opacity: 0.5; font-size: 0.8rem; letter-spacing: 2px; }
+
+        /* --- BOTOL HANYUT --- */
+        .bottle {
+            position: absolute; width: 40px; height: 70px;
+            background: rgba(212, 175, 55, 0.2);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            border-radius: 10px 10px 20px 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
         }
 
-        @keyframes floatWish {
-            0% { transform: translateY(400px) translateX(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-50px) translateX(20px); opacity: 0; }
+        .bottle::before { /* Tutup Gabus */
+            content: ''; position: absolute; top: -10px; width: 15px; height: 12px;
+            background: #5d4037; border-radius: 3px;
         }
 
-        /* --- INPUT AREA --- */
-        .input-box {
-            width: 85%; max-width: 400px; background: var(--glass);
-            padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
+        .bottle:hover { transform: scale(1.2) rotate(10deg); filter: brightness(1.5); }
+
+        /* Animasi Hanyut */
+        @keyframes drift {
+            from { left: -100px; transform: rotate(-5deg); }
+            to { left: 110%; transform: rotate(5deg); }
         }
 
-        textarea {
-            width: 90%; background: none; border: none; border-bottom: 1px solid var(--gold);
-            color: white; font-family: inherit; padding: 10px; outline: none;
-            resize: none; text-align: center; font-size: 1rem;
+        /* --- POPUP PESAN --- */
+        #modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            display: none; align-items: center; justify-content: center; z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: #fff; color: #333; padding: 40px; width: 80%; max-width: 400px;
+            border-radius: 5px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            font-family: 'Playfair Display', serif; text-align: center;
+            position: relative; line-height: 1.6;
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+        }
+
+        .close-btn { 
+            margin-top: 20px; cursor: pointer; color: var(--gold); 
+            font-weight: bold; font-size: 0.8rem; text-transform: uppercase;
+        }
+
+        /* --- INPUT UI --- */
+        .controls {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            z-index: 50; width: 90%; max-width: 400px; text-align: center;
+        }
+
+        input {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+            padding: 15px; border-radius: 30px; color: white; outline: none;
+            text-align: center; font-family: inherit; margin-bottom: 15px;
         }
 
         .btn-send {
-            margin-top: 15px; padding: 10px 30px; background: var(--gold);
-            border: none; border-radius: 50px; font-weight: bold; cursor: pointer;
-            transition: 0.3s;
+            background: var(--gold); color: #111; border: none;
+            padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer;
         }
-
-        .btn-send:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
-
-        #error-msg { color: #ff6b6b; font-size: 0.8rem; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="stars"></div>
+    <div class="ocean" id="ocean">
+        <header>
+            <h1 class="logo">Ocean of Whispers</h1>
+            <p class="sub">Hanyutkan harapan, temukan takdir.</p>
+        </header>
 
-    <header>
-        <h1 class="logo">Wish Jar</h1>
-        <p class="sub">Tulis Harapanmu di Antara Bintang</p>
-    </header>
+        <div class="wave" style="bottom: 0; opacity: 0.1;"></div>
+        <div class="wave" style="bottom: 20px; opacity: 0.05; animation-delay: -5s;"></div>
+    </div>
 
-    <div id="jar-container">
+    <div class="controls">
+        <input type="text" id="wishInput" placeholder="Tulis rahasia atau harapanmu...">
+        <button class="btn-send" onclick="sendBottle()">Hanyutkan Botol ✨</button>
+    </div>
+
+    <div id="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <p id="wishText">"Semoga kita selalu bahagia..."</p>
+            <div class="close-btn" onclick="closeModal()">Tutup Pesan</div>
         </div>
-
-    <div class="input-box">
-        <textarea id="wishInput" rows="2" placeholder="Tulis harapanmu di sini..."></textarea>
-        <div id="error-msg">⚠️ Harap gunakan kata-kata yang baik ya.</div>
-        <button class="btn-send" onclick="sendWish()">Kirim ke Semesta ✨</button>
     </div>
 
     <script>
-        // DAFTAR KATA KASAR (Silakan tambah sendiri di sini)
-        const badWords = ["anjing", "babi", "bangsat", "tolol", "goblok", "kontol", "memek", "asuh"];
+        const ocean = document.getElementById('ocean');
+        const badWords = ["anjing", "babi", "bangsat", "tolol", "goblok", "kontol", "memek"];
+        
+        // Database lokal sementara (Simulasi botol orang lain)
+        let publicWishes = [
+            "Semoga dia tahu kalau aku masih sayang.",
+            "Besok ujian, semoga lancar ya Tuhan!",
+            "Aku baru saja melihat bintang jatuh di Bali.",
+            "Tahun 2026 ini aku harus sukses!",
+            "Halo asing, semoga harimu menyenangkan."
+        ];
 
-        function sendWish() {
+        function sendBottle() {
             const input = document.getElementById('wishInput');
-            const error = document.getElementById('error-msg');
-            const jar = document.getElementById('jar-container');
             let text = input.value.trim();
 
             if (text === "") return;
 
-            // CEK FILTER KATA KASAR
             const isToxic = badWords.some(word => text.toLowerCase().includes(word));
-
             if (isToxic) {
-                error.style.display = 'block';
-                input.style.borderBottom = '1px solid #ff6b6b';
-                setTimeout(() => {
-                    error.style.display = 'none';
-                    input.style.borderBottom = '1px solid #d4af37';
-                }, 3000);
+                alert("Lautan menolak kata-kata kasar. Gunakan bahasa yang baik.");
                 return;
             }
 
-            // JIKA LOLOS FILTER, BUAT BUBBLE
-            createWish(text);
+            // Tambahkan ke daftar botol yang hanyut
+            spawnBottle(text, true);
             input.value = "";
         }
 
-        function createWish(msg) {
-            const jar = document.getElementById('jar-container');
-            const bubble = document.createElement('div');
-            bubble.className = 'wish-bubble';
-            bubble.innerText = msg;
-
-            // Posisi acak horizontal
-            const randomX = Math.floor(Math.random() * 150) - 75;
-            bubble.style.left = `calc(50% + ${randomX}px)`;
+        function spawnBottle(text, isUser = false) {
+            const bottle = document.createElement('div');
+            bottle.className = 'bottle';
             
-            // Kecepatan acak
-            const duration = 5 + Math.random() * 5;
-            bubble.style.animationDuration = `${duration}s`;
+            // Posisi vertical acak di area laut
+            const randomTop = 30 + Math.random() * 50; 
+            bottle.style.top = `${randomTop}%`;
+            
+            // Kecepatan hanyut acak
+            const duration = 15 + Math.random() * 20;
+            bottle.style.animation = `drift ${duration}s linear forwards`;
 
-            jar.appendChild(bubble);
+            bottle.onclick = () => openBottle(text);
 
-            // Hapus elemen setelah animasi selesai agar tidak berat
-            setTimeout(() => {
-                bubble.remove();
-            }, duration * 1000);
+            ocean.appendChild(bottle);
+
+            // Hapus botol setelah sampai ujung
+            setTimeout(() => bottle.remove(), duration * 1000);
         }
+
+        function openBottle(text) {
+            document.getElementById('wishText').innerText = `"${text}"`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Munculkan botol "orang lain" secara otomatis setiap beberapa detik
+        setInterval(() => {
+            const randomWish = publicWishes[Math.floor(Math.random() * publicWishes.length)];
+            spawnBottle(randomWish);
+        }, 5000);
+
+        // Munculkan beberapa di awal
+        window.onload = () => {
+            publicWishes.forEach((w, i) => {
+                setTimeout(() => spawnBottle(w), i * 2000);
+            });
+        };
     </script>
 </body>
 </html>
