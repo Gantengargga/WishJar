@@ -1,59 +1,51 @@
 // script.js
 const ocean = document.getElementById('ocean-inner');
 
-// 1. Fungsi Membuat Ikan Berwarna Secara Acak
-function spawnEcosystem() {
-    const fishEmojis = ['🐠', '🐟', '🐡', '🦈', '🐬', '🐙'];
-    const corals = ['🪸', '🌿', '🐚', '🦀'];
+// 1. GENERATE IKAN DENGAN GERAKAN NATURAL
+function spawnRealFish() {
+    const fishAssets = [
+        'https://cdn-icons-png.flaticon.com/512/2316/2316688.png', // Ikan 1
+        'https://cdn-icons-png.flaticon.com/512/2205/2205021.png', // Ikan 2
+        'https://cdn-icons-png.flaticon.com/512/3063/3063811.png'  // Ikan 3
+    ];
 
-    // Tambah Terumbu Karang di Dasar
-    for (let i = 0; i < 50; i++) {
-        let coral = document.createElement('div');
-        coral.className = 'coral-item';
-        coral.style.position = 'absolute';
-        coral.style.left = Math.random() * 3000 + 'px';
-        coral.style.top = (2000 + Math.random() * 900) + 'px';
-        coral.style.fontSize = (30 + Math.random() * 50) + 'px';
-        coral.innerText = corals[Math.floor(Math.random() * corals.length)];
-        ocean.appendChild(coral);
-    }
-
-    // Tambah Ikan yang Berenang
     setInterval(() => {
-        let fish = document.createElement('div');
-        fish.innerText = fishEmojis[Math.floor(Math.random() * fishEmojis.length)];
+        const fish = document.createElement('img');
+        fish.src = fishAssets[Math.floor(Math.random() * fishAssets.length)];
         fish.style.position = 'absolute';
-        fish.style.fontSize = '25px';
-        fish.style.left = '-50px';
-        fish.style.top = Math.random() * 3000 + 'px';
-        
+        fish.style.width = (30 + Math.random() * 40) + 'px';
+        fish.style.left = '-100px';
+        fish.style.top = Math.random() * 2000 + 'px';
+        fish.style.opacity = 0.8;
         ocean.appendChild(fish);
 
-        // Animasi Ikan Menyebrang
+        // Gerakan Zig-zag Natural
         gsap.to(fish, {
-            x: 3100,
-            y: "+=100",
-            duration: 10 + Math.random() * 20,
-            ease: "none",
+            x: 3200,
+            y: `+=${Math.random() * 200 - 100}`,
+            duration: 15 + Math.random() * 10,
+            ease: "sine.inOut",
             onComplete: () => fish.remove()
         });
-    }, 2000);
+    }, 3000);
 }
 
-// 2. Logika Animasi Orang (Karakter Berwarna)
-function characterThrowAnimation() {
-    const player = document.getElementById('player'); // Pastikan ID ini ada di HTML
-    const hand = document.getElementById('arm-hand');
-
-    // Timeline GSAP untuk pergerakan halus
+// 2. ANIMASI KARAKTER BERWARNA (Melempar)
+function triggerThrow() {
+    const char = document.getElementById('player');
+    const arm = document.getElementById('arm');
+    
     const tl = gsap.timeline();
-
-    tl.to(player, { left: "45%", duration: 2, ease: "power1.inOut" })
-      .to(hand, { rotation: -140, duration: 0.4, ease: "back.out" })
+    
+    // Jalan santai ke tepi
+    tl.to(char, { left: "45%", duration: 2, ease: "power1.inOut" })
+      // Ayunan badan sedikit ke belakang (ancang-ancang)
+      .to(char, { rotation: -5, duration: 0.3 })
+      // Lemparan kuat
+      .to(arm, { rotation: -150, duration: 0.4, ease: "back.out(2)" })
       .add(() => {
-          // Fungsi lempar botol dipanggil di sini
-          console.log("Botol Dilepas!");
+          createBottlePhysics(); // Panggil fungsi lempar fisik
       })
-      .to(hand, { rotation: 0, duration: 0.4 })
-      .to(player, { left: "110%", duration: 2, delay: 0.5 });
+      .to(arm, { rotation: 0, duration: 0.6 })
+      .to(char, { left: "120%", duration: 2, delay: 1 });
 }
