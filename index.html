@@ -1,19 +1,44 @@
-<div id="island-scene">
-    <div class="ship-realistic"></div>
-    <div class="beach"></div>
-    <div class="water-surface"></div>
-    
-    <div id="player" class="char-pro">
-        <div class="pro-head" style="background: #ffdbac; border: 2px solid #333;"></div>
-        <div class="pro-shirt" style="background: #2ecc71; height: 50px;"></div>
-        <div class="pro-arm" id="arm" style="background: #ffdbac; border: 1px solid #333;"></div>
-    </div>
-</div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Living Sea | Ultra Premium</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-<div id="ocean-scene">
-    <div class="god-rays"></div>
-    <div id="ocean-inner">
-        <img src="https://cdn-icons-png.flaticon.com/512/3063/3063853.png" style="position:absolute; bottom:20px; left:200px; width:200px;">
-        <img src="https://cdn-icons-png.flaticon.com/512/1043/1043513.png" style="position:absolute; bottom:50px; right:300px; width:150px;">
+    <nav class="main-nav">
+        <button class="nav-btn active" onclick="switchView(0)">Pulau</button>
+        <button class="nav-btn" onclick="switchView(1)">Lautan</button>
+    </nav>
+
+    <div id="viewport">
+        <section id="island-scene">
+            <div class="sun"></div>
+            <div class="ship">🚢</div>
+            <div class="beach-sand"></div>
+            
+            <div id="player" class="char-pro">
+                <div class="pro-head"></div>
+                <div class="pro-shirt"></div>
+                <div class="pro-arm" id="arm"></div>
+            </div>
+
+            <div class="desk" id="desk">
+                <textarea id="wish" placeholder="Tulis rahasiamu..."></textarea>
+                <button onclick="startAction()">Lempar Botol ✨</button>
+            </div>
+        </section>
+
+        <section id="ocean-scene">
+            <div class="god-rays"></div>
+            <div id="ocean-inner">
+                </div>
+        </section>
     </div>
-</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
