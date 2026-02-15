@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestial Wish Jar | Semesta Harapan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;500&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #d4af37;
+            --space: #050508;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0; padding: 0; background: var(--space);
+            font-family: 'Quicksand', sans-serif; color: white;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* --- BACKGROUND BINTANG --- */
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            z-index: -1;
+        }
+
+        header { padding: 40px 20px; text-align: center; }
+        .logo { font-family: 'Dancing Script', cursive; font-size: 2.8rem; color: var(--gold); margin: 0; }
+        .sub { font-family: 'Playfair Display', serif; font-style: italic; opacity: 0.6; font-size: 0.9rem; letter-spacing: 2px; }
+
+        /* --- THE JAR (BOTOL KRISTAL) --- */
+        #jar-container {
+            position: relative; width: 280px; height: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px 50px 100px 100px;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.1), inset 0 0 30px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            margin: 20px 0;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 40px 20px; overflow: hidden;
+        }
+
+        #jar-container::before { /* Tutup Botol */
+            content: ''; position: absolute; top: 0; width: 40%; height: 20px;
+            background: var(--gold); border-radius: 0 0 15px 15px;
+        }
+
+        /* --- WISHES INSIDE --- */
+        .wish-bubble {
+            position: absolute; background: white; color: black;
+            padding: 8px 12px; border-radius: 15px; font-size: 11px;
+            max-width: 150px; text-align: center; font-weight: bold;
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+            animation: floatWish 8s linear infinite;
+            opacity: 0.9; cursor: default;
+        }
+
+        @keyframes floatWish {
+            0% { transform: translateY(400px) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-50px) translateX(20px); opacity: 0; }
+        }
+
+        /* --- INPUT AREA --- */
+        .input-box {
+            width: 85%; max-width: 400px; background: var(--glass);
+            padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        textarea {
+            width: 90%; background: none; border: none; border-bottom: 1px solid var(--gold);
+            color: white; font-family: inherit; padding: 10px; outline: none;
+            resize: none; text-align: center; font-size: 1rem;
+        }
+
+        .btn-send {
+            margin-top: 15px; padding: 10px 30px; background: var(--gold);
+            border: none; border-radius: 50px; font-weight: bold; cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-send:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+
+        #error-msg { color: #ff6b6b; font-size: 0.8rem; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+
+    <header>
+        <h1 class="logo">Wish Jar</h1>
+        <p class="sub">Tulis Harapanmu di Antara Bintang</p>
+    </header>
+
+    <div id="jar-container">
+        </div>
+
+    <div class="input-box">
+        <textarea id="wishInput" rows="2" placeholder="Tulis harapanmu di sini..."></textarea>
+        <div id="error-msg">⚠️ Harap gunakan kata-kata yang baik ya.</div>
+        <button class="btn-send" onclick="sendWish()">Kirim ke Semesta ✨</button>
+    </div>
+
+    <script>
+        // DAFTAR KATA KASAR (Silakan tambah sendiri di sini)
+        const badWords = ["anjing", "babi", "bangsat", "tolol", "goblok", "kontol", "memek", "asuh"];
+
+        function sendWish() {
+            const input = document.getElementById('wishInput');
+            const error = document.getElementById('error-msg');
+            const jar = document.getElementById('jar-container');
+            let text = input.value.trim();
+
+            if (text === "") return;
+
+            // CEK FILTER KATA KASAR
+            const isToxic = badWords.some(word => text.toLowerCase().includes(word));
+
+            if (isToxic) {
+                error.style.display = 'block';
+                input.style.borderBottom = '1px solid #ff6b6b';
+                setTimeout(() => {
+                    error.style.display = 'none';
+                    input.style.borderBottom = '1px solid #d4af37';
+                }, 3000);
+                return;
+            }
+
+            // JIKA LOLOS FILTER, BUAT BUBBLE
+            createWish(text);
+            input.value = "";
+        }
+
+        function createWish(msg) {
+            const jar = document.getElementById('jar-container');
+            const bubble = document.createElement('div');
+            bubble.className = 'wish-bubble';
+            bubble.innerText = msg;
+
+            // Posisi acak horizontal
+            const randomX = Math.floor(Math.random() * 150) - 75;
+            bubble.style.left = `calc(50% + ${randomX}px)`;
+            
+            // Kecepatan acak
+            const duration = 5 + Math.random() * 5;
+            bubble.style.animationDuration = `${duration}s`;
+
+            jar.appendChild(bubble);
+
+            // Hapus elemen setelah animasi selesai agar tidak berat
+            setTimeout(() => {
+                bubble.remove();
+            }, duration * 1000);
+        }
+    </script>
+</body>
+</html>
