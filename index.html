@@ -3,209 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ocean of Whispers | Pesan di Dalam Botol</title>
+    <title>Archipelago of Secrets | Island & Ocean</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;500&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --sea: #0a192f;
-            --water: #112240;
+            --sky: #87CEEB;
+            --sea-surface: #1e90ff;
+            --sea-deep: #00008b;
+            --sand: #f2d2a9;
             --gold: #d4af37;
-            --sand: #c2b280;
         }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background: var(--sea);
-            font-family: 'Quicksand', sans-serif; color: white;
+            font-family: 'Quicksand', sans-serif; overflow: hidden;
+            background: var(--sky);
         }
 
-        /* --- LAUTAN --- */
-        .ocean {
-            position: relative; width: 100%; height: 100vh;
-            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-            overflow: hidden;
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 20px; z-index: 100;
+        }
+        .nav-btn {
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+            border: 2px solid white; padding: 10px 20px; border-radius: 50px;
+            color: white; cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        .nav-btn.active { background: var(--gold); color: black; border-color: var(--gold); }
+
+        /* --- VIEWPORT CONTAINER --- */
+        #main-stage {
+            width: 100%; height: 200vh; /* 100vh Pulau, 100vh Laut */
+            transition: transform 1.2s cubic-bezier(0.65, 0, 0.35, 1);
         }
 
-        /* Efek Ombak Lembut */
-        .wave {
-            position: absolute; bottom: 0; left: 0; width: 200%; height: 100px;
-            background: url('https://raw.githubusercontent.com/yusufshakeel/svg-icon/master/svg/wave.svg');
-            background-size: 50% 100px;
-            opacity: 0.1;
-            animation: waveAnim 20s linear infinite;
+        /* --- SECTION 1: PULAU (THE ISLAND) --- */
+        #island-view {
+            height: 100vh; background: linear-gradient(to bottom, #87CEEB, #E0F6FF);
+            position: relative; overflow: hidden; display: flex; justify-content: center;
         }
 
-        @keyframes waveAnim {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
+        .island-sand {
+            position: absolute; bottom: 0; width: 120%; height: 30vh;
+            background: var(--sand); border-radius: 50% 50% 0 0;
+            box-shadow: inset 0 20px 50px rgba(0,0,0,0.1);
         }
 
-        header {
-            position: absolute; top: 30px; width: 100%; text-align: center;
-            z-index: 10; pointer-events: none;
+        .character {
+            position: absolute; bottom: 20vh; left: -100px;
+            width: 80px; height: 120px; background: #333; /* Placeholder Orang */
+            border-radius: 20px; transition: 1s; z-index: 10;
         }
-        .logo { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--gold); margin: 0; }
-        .sub { font-family: 'Playfair Display', serif; font-style: italic; opacity: 0.5; font-size: 0.8rem; letter-spacing: 2px; }
 
-        /* --- BOTOL HANYUT --- */
-        .bottle {
-            position: absolute; width: 40px; height: 70px;
-            background: rgba(212, 175, 55, 0.2);
-            border: 2px solid rgba(212, 175, 55, 0.4);
-            border-radius: 10px 10px 20px 20px;
-            cursor: pointer;
-            transition: 0.3s;
+        .paper-ui {
+            position: absolute; top: 20%; background: white; padding: 30px;
+            border-radius: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 80%; max-width: 300px; text-align: center;
+            transform: translateY(0); transition: 0.5s;
+        }
+
+        textarea {
+            width: 100%; border: none; border-bottom: 1px solid #ccc;
+            font-family: 'Playfair Display', serif; font-size: 1.1rem;
+            outline: none; resize: none; text-align: center;
+        }
+
+        /* --- SECTION 2: LAUT (THE OCEAN) --- */
+        #ocean-view {
+            height: 100vh; background: linear-gradient(to bottom, #1e90ff, #000033);
+            position: relative; overflow: auto; /* Bisa di-scroll/drag */
+        }
+
+        .ocean-bed {
+            width: 2000px; height: 2000px; /* Area luas untuk eksplorasi */
+            position: relative;
+        }
+
+        .bottle-item {
+            position: absolute; width: 50px; height: 30px;
+            background: rgba(255,255,255,0.3); border: 1px solid gold;
+            border-radius: 20px 5px 5px 20px; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            font-size: 10px; color: white; animation: float 3s ease-in-out infinite;
         }
 
-        .bottle::before { /* Tutup Gabus */
-            content: ''; position: absolute; top: -10px; width: 15px; height: 12px;
-            background: #5d4037; border-radius: 3px;
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-15px) rotate(5deg); }
         }
 
-        .bottle:hover { transform: scale(1.2) rotate(10deg); filter: brightness(1.5); }
-
-        /* Animasi Hanyut */
-        @keyframes drift {
-            from { left: -100px; transform: rotate(-5deg); }
-            to { left: 110%; transform: rotate(5deg); }
-        }
-
-        /* --- POPUP PESAN --- */
-        #modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-            display: none; align-items: center; justify-content: center; z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .modal-content {
-            background: #fff; color: #333; padding: 40px; width: 80%; max-width: 400px;
-            border-radius: 5px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            font-family: 'Playfair Display', serif; text-align: center;
-            position: relative; line-height: 1.6;
-            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-        }
-
-        .close-btn { 
-            margin-top: 20px; cursor: pointer; color: var(--gold); 
-            font-weight: bold; font-size: 0.8rem; text-transform: uppercase;
-        }
-
-        /* --- INPUT UI --- */
-        .controls {
-            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-            z-index: 50; width: 90%; max-width: 400px; text-align: center;
-        }
-
-        input {
-            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
-            padding: 15px; border-radius: 30px; color: white; outline: none;
-            text-align: center; font-family: inherit; margin-bottom: 15px;
-        }
-
-        .btn-send {
-            background: var(--gold); color: #111; border: none;
-            padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer;
+        /* --- ANIMASI LEMPAR --- */
+        .flying-bottle {
+            position: absolute; z-index: 99; width: 30px; height: 15px;
+            background: gold; border-radius: 10px; pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="ocean" id="ocean">
-        <header>
-            <h1 class="logo">Ocean of Whispers</h1>
-            <p class="sub">Hanyutkan harapan, temukan takdir.</p>
-        </header>
+    <nav>
+        <div class="nav-btn active" id="btn-island" onclick="goTo('island')">Pulau</div>
+        <div class="nav-btn" id="btn-ocean" onclick="goTo('ocean')">Laut Luas</div>
+    </nav>
 
-        <div class="wave" style="bottom: 0; opacity: 0.1;"></div>
-        <div class="wave" style="bottom: 20px; opacity: 0.05; animation-delay: -5s;"></div>
-    </div>
+    <div id="main-stage">
+        <section id="island-view">
+            <div class="island-sand"></div>
+            
+            <div class="paper-ui" id="paper">
+                <p style="color: #666; font-size: 0.7rem; margin-bottom: 10px;">TULIS PESAN RAHASIA</p>
+                <textarea id="wishContent" rows="4" placeholder="Ketik di sini..."></textarea>
+                <button onclick="animateThrow()" style="margin-top: 20px; background: #333; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Masukan Botol & Lempar!</button>
+            </div>
 
-    <div class="controls">
-        <input type="text" id="wishInput" placeholder="Tulis rahasia atau harapanmu...">
-        <button class="btn-send" onclick="sendBottle()">Hanyutkan Botol ✨</button>
-    </div>
+            <div class="character" id="walker"></div>
+        </section>
 
-    <div id="modal" onclick="closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <p id="wishText">"Semoga kita selalu bahagia..."</p>
-            <div class="close-btn" onclick="closeModal()">Tutup Pesan</div>
-        </div>
+        <section id="ocean-view">
+            <div class="ocean-bed" id="oceanBed">
+                </div>
+        </section>
     </div>
 
     <script>
-        const ocean = document.getElementById('ocean');
-        const badWords = ["anjing", "babi", "bangsat", "tolol", "goblok", "kontol", "memek"];
-        
-        // Database lokal sementara (Simulasi botol orang lain)
-        let publicWishes = [
-            "Semoga dia tahu kalau aku masih sayang.",
-            "Besok ujian, semoga lancar ya Tuhan!",
-            "Aku baru saja melihat bintang jatuh di Bali.",
-            "Tahun 2026 ini aku harus sukses!",
-            "Halo asing, semoga harimu menyenangkan."
-        ];
+        const stage = document.getElementById('main-stage');
+        const walker = document.getElementById('walker');
+        const paper = document.getElementById('paper');
+        const oceanBed = document.getElementById('oceanBed');
+        const badWords = ["anjing", "babi", "bangsat", "goblok"];
 
-        function sendBottle() {
-            const input = document.getElementById('wishInput');
-            let text = input.value.trim();
+        // 1. PINDAH VIEW
+        function goTo(view) {
+            if(view === 'island') {
+                stage.style.transform = "translateY(0)";
+                document.getElementById('btn-island').classList.add('active');
+                document.getElementById('btn-ocean').classList.remove('active');
+            } else {
+                stage.style.transform = "translateY(-100vh)";
+                document.getElementById('btn-ocean').classList.add('active');
+                document.getElementById('btn-island').classList.remove('active');
+                generateOceanBottles();
+            }
+        }
 
-            if (text === "") return;
-
-            const isToxic = badWords.some(word => text.toLowerCase().includes(word));
-            if (isToxic) {
-                alert("Lautan menolak kata-kata kasar. Gunakan bahasa yang baik.");
-                return;
+        // 2. ANIMASI ORANG DATANG & LEMPAR
+        function animateThrow() {
+            const content = document.getElementById('wishContent').value;
+            if(!content) return;
+            
+            // Filter
+            if(badWords.some(w => content.toLowerCase().includes(w))) {
+                alert("Lautan menolak pesan kasar!"); return;
             }
 
-            // Tambahkan ke daftar botol yang hanyut
-            spawnBottle(text, true);
-            input.value = "";
+            // Sembunyikan Kertas
+            paper.style.transform = "translateY(-500px)";
+
+            // Orang Jalan Datang
+            gsap.to(walker, { left: "45%", duration: 1.5, ease: "power2.out", onComplete: () => {
+                // Animasi Lempar
+                createFlyingBottle();
+            }});
         }
 
-        function spawnBottle(text, isUser = false) {
-            const bottle = document.createElement('div');
-            bottle.className = 'bottle';
-            
-            // Posisi vertical acak di area laut
-            const randomTop = 30 + Math.random() * 50; 
-            bottle.style.top = `${randomTop}%`;
-            
-            // Kecepatan hanyut acak
-            const duration = 15 + Math.random() * 20;
-            bottle.style.animation = `drift ${duration}s linear forwards`;
+        function createFlyingBottle() {
+            const bot = document.createElement('div');
+            bot.className = 'flying-bottle';
+            bot.style.left = "48%";
+            bot.style.bottom = "30vh";
+            document.getElementById('island-view').appendChild(bot);
 
-            bottle.onclick = () => openBottle(text);
-
-            ocean.appendChild(bottle);
-
-            // Hapus botol setelah sampai ujung
-            setTimeout(() => bottle.remove(), duration * 1000);
-        }
-
-        function openBottle(text) {
-            document.getElementById('wishText').innerText = `"${text}"`;
-            document.getElementById('modal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-        }
-
-        // Munculkan botol "orang lain" secara otomatis setiap beberapa detik
-        setInterval(() => {
-            const randomWish = publicWishes[Math.floor(Math.random() * publicWishes.length)];
-            spawnBottle(randomWish);
-        }, 5000);
-
-        // Munculkan beberapa di awal
-        window.onload = () => {
-            publicWishes.forEach((w, i) => {
-                setTimeout(() => spawnBottle(w), i * 2000);
+            // Gerakan Parabola ke arah Laut (Bawah)
+            gsap.to(bot, {
+                duration: 1.5,
+                x: 300,
+                y: 500,
+                rotation: 720,
+                ease: "power1.in",
+                onComplete: () => {
+                    bot.remove();
+                    gsap.to(walker, { left: "110%", duration: 1.5 }); // Orang pergi
+                    alert("Botolmu telah hanyut ke lautan luas...");
+                    setTimeout(() => {
+                        paper.style.transform = "translateY(0)";
+                        document.getElementById('wishContent').value = "";
+                        goTo('ocean');
+                    }, 1000);
+                }
             });
-        };
+        }
+
+        // 3. GENERATE LAUTAN LUAS (Realistik)
+        function generateOceanBottles() {
+            oceanBed.innerHTML = ""; // Refresh
+            for(let i = 0; i < 30; i++) {
+                const b = document.createElement('div');
+                b.className = 'bottle-item';
+                // Acak posisi di area 2000x2000
+                b.style.left = Math.random() * 1800 + "px";
+                b.style.top = Math.random() * 1800 + "px";
+                
+                // Variasi warna (permukaan terang, dasar gelap)
+                const opacity = 1 - (parseInt(b.style.top) / 2000);
+                b.style.opacity = opacity + 0.2;
+                
+                b.innerText = "✉️";
+                b.onclick = () => alert("Pesan Seseorang: [Isi Rahasia]");
+                oceanBed.appendChild(b);
+            }
+        }
     </script>
 </body>
 </html>
